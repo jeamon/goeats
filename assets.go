@@ -81,7 +81,7 @@ func (g *Game) load() {
 	g.faces["down"] = rl.LoadTexture("assets/faces/down.png")
 	g.faces["left"] = rl.LoadTexture("assets/faces/left.png")
 	g.faces["right"] = rl.LoadTexture("assets/faces/right.png")
-	g.eatsound = rl.LoadSound("assets/sounds/eat.wav")
+	g.eatsound = rl.LoadSound("assets/sounds/actions/eat.wav")
 }
 
 // Unload - Unload resources
