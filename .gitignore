@@ -1,0 +1,19 @@
+# share assets structure but ignore contents
+assets/*/*.mp3
+assets/*/*.wav
+assets/sounds/*/*.mp3
+assets/sounds/*/*.wav
+assets/*/*.png
+
+# Binaries for programs and plugins
+*.exe
+goeats
+
+# OSX stuff
+.DS_Store
+
+# VSCode files
+.vscode
+
+# tracking list. 
+TODO.txt
