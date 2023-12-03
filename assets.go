@@ -47,6 +47,18 @@ func (g *Game) load() {
 		g.donuts = append(g.donuts, item{name, rl.LoadTexture("assets/donuts/" + fn)})
 	}
 
+	f, err = os.Open("assets/lives")
+	checkerr(err)
+	filenames, err = f.Readdirnames(0)
+	checkerr(err)
+	for _, fn := range filenames {
+		name, _, found := strings.Cut(fn, "_")
+		if !found {
+			name = strings.TrimSuffix(name, ".png")
+		}
+		g.lives = append(g.lives, item{name, rl.LoadTexture("assets/lives/" + fn)})
+	}
+
 	// load foods sounds
 	f, err = os.Open("assets/sounds/fruits")
 	checkerr(err)
@@ -74,14 +86,16 @@ func (g *Game) load() {
 		name := strings.TrimSuffix(fn, ".mp3")
 		g.sounds[name] = rl.LoadSound("assets/sounds/donuts/" + fn)
 	}
-
 	f.Close()
 
 	g.faces["up"] = rl.LoadTexture("assets/faces/up.png")
 	g.faces["down"] = rl.LoadTexture("assets/faces/down.png")
 	g.faces["left"] = rl.LoadTexture("assets/faces/left.png")
 	g.faces["right"] = rl.LoadTexture("assets/faces/right.png")
-	g.eatsound = rl.LoadSound("assets/sounds/actions/eat.wav")
+
+	g.actions["eat"] = rl.LoadSound("assets/sounds/actions/eat.wav")
+	g.actions["life"] = rl.LoadSound("assets/sounds/actions/life.mp3")
+	g.actions["level"] = rl.LoadSound("assets/sounds/actions/level.mp3")
 }
 
 // Unload - Unload resources
@@ -110,5 +124,7 @@ func (g *Game) unload() {
 		rl.UnloadSound(s)
 	}
 
-	rl.UnloadSound(g.eatsound)
+	for _, s := range g.actions {
+		rl.UnloadSound(s)
+	}
 }

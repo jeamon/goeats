@@ -12,7 +12,9 @@ fruits and vegetables. At the same time develop strategy to escape traps and ene
 * use gamepad direction keys to move up/down left/right
 * auto move each food on the scene after 30 seconds
 * show circle around the walker to better eat the food
-* display number of of foods (fruits, veggies, donuts) eaten
+* display number of foods (fruits, veggies, donuts) & life eaten
+* make different noise when food eaten or life collected
+* make different noise when walker reaches another level 
 
 * display menu to choose the walker (boy or girl) and language
 * view in real-time the exact coordinates of your position

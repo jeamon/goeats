@@ -12,6 +12,7 @@ const (
 	V kind = 0 // veggie item
 	F kind = 1 // fruit item
 	D kind = 2 // donut item
+	L kind = 3 // life item
 )
 
 const (
@@ -35,6 +36,7 @@ func main() {
 	rl.InitAudioDevice()
 	rl.SetTargetFPS(60)
 	game.load()
+	game.score.sound = game.actions["level"]
 	game.randomize()
 
 	game.walker.direction = game.faces["right"]

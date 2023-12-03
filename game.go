@@ -15,10 +15,11 @@ type item struct {
 type Game struct {
 	num           int
 	faces         map[string]rl.Texture2D
-	eatsound      rl.Sound
+	actions       map[string]rl.Sound
 	fruits        []item
 	vegetables    []item
 	donuts        []item
+	lives         []item
 	sounds        map[string]rl.Sound
 	walker        Walker
 	foods         []*Food
@@ -27,16 +28,21 @@ type Game struct {
 }
 
 func (g *Game) Init() {
-	g.num = 10
+	g.num = 11 // 10 foods + 1 life
 	g.foods = make([]*Food, g.num)
-	for i := 0; i < g.num; i++ {
+	for i := 0; i < g.num-1; i++ {
 		g.foods[i] = &Food{change: true, kind: kind(i % 3)}
 	}
+	// append one life item to the foods list
+	// g.foods = append(g.foods, &Food{change: true, kind: L})
+	g.foods[10] = &Food{change: true, kind: L}
 
 	g.faces = make(map[string]rl.Texture2D, 4)
 	g.vegetables = make([]item, 0, 68)
 	g.fruits = make([]item, 0, 44)
 	g.donuts = make([]item, 0, 12)
+	g.lives = make([]item, 0, 4)
+	g.actions = make(map[string]rl.Sound, 3)
 	g.sounds = make(map[string]rl.Sound)
 
 	g.walker.velocity = 4
@@ -69,8 +75,12 @@ func (g *Game) update() {
 	for _, food := range g.foods {
 		food.change = false
 		if g.collision(food) {
-			rl.PlaySound(g.eatsound)
-			rl.PlaySound(g.sounds[food.name])
+			if food.kind == L {
+				rl.PlaySound(g.actions["life"])
+			} else {
+				rl.PlaySound(g.actions["eat"])
+				rl.PlaySound(g.sounds[food.name])
+			}
 			g.score.update(food.kind)
 			food.change = true
 		}
@@ -94,14 +104,15 @@ func (g *Game) randomize() {
 		if !food.change {
 			continue
 		}
-		if food.kind == F {
+		switch food.kind {
+		case F:
 			food.randomize(&(g.fruits))
-		}
-		if food.kind == V {
+		case V:
 			food.randomize(&(g.vegetables))
-		}
-		if food.kind == D {
+		case D:
 			food.randomize(&(g.donuts))
+		case L:
+			food.randomize(&(g.lives))
 		}
 	}
 }
