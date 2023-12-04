@@ -2,10 +2,19 @@ package main
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
+
+func isPng(path string) bool {
+	return filepath.Ext(path) == ".png"
+}
+
+func isMp3(path string) bool {
+	return filepath.Ext(path) == ".mp3"
+}
 
 // Load - Load resources
 func (g *Game) load() {
@@ -14,6 +23,9 @@ func (g *Game) load() {
 	filenames, err := f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
+		if !isPng(fn) {
+			continue
+		}
 		name, _, found := strings.Cut(fn, "_")
 		if !found {
 			name = strings.TrimSuffix(name, ".png")
@@ -27,6 +39,9 @@ func (g *Game) load() {
 	filenames, err = f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
+		if !isPng(fn) {
+			continue
+		}
 		name, _, found := strings.Cut(fn, "_")
 		if !found {
 			name = strings.TrimSuffix(name, ".png")
@@ -40,6 +55,9 @@ func (g *Game) load() {
 	filenames, err = f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
+		if !isPng(fn) {
+			continue
+		}
 		name, _, found := strings.Cut(fn, "_")
 		if !found {
 			name = strings.TrimSuffix(name, ".png")
@@ -52,6 +70,9 @@ func (g *Game) load() {
 	filenames, err = f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
+		if !isPng(fn) {
+			continue
+		}
 		name, _, found := strings.Cut(fn, "_")
 		if !found {
 			name = strings.TrimSuffix(name, ".png")
@@ -65,6 +86,9 @@ func (g *Game) load() {
 	filenames, err = f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
+		if !isMp3(fn) {
+			continue
+		}
 		name := strings.TrimSuffix(fn, ".mp3")
 		g.sounds[name] = rl.LoadSound("assets/sounds/fruits/" + fn)
 	}
@@ -74,6 +98,9 @@ func (g *Game) load() {
 	filenames, err = f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
+		if !isMp3(fn) {
+			continue
+		}
 		name := strings.TrimSuffix(fn, ".mp3")
 		g.sounds[name] = rl.LoadSound("assets/sounds/vegetables/" + fn)
 	}
@@ -83,6 +110,9 @@ func (g *Game) load() {
 	filenames, err = f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
+		if !isMp3(fn) {
+			continue
+		}
 		name := strings.TrimSuffix(fn, ".mp3")
 		g.sounds[name] = rl.LoadSound("assets/sounds/donuts/" + fn)
 	}
