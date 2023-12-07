@@ -1,9 +1,7 @@
 # share assets structure but ignore contents
-assets/*/*.mp3
-assets/*/*.wav
-assets/sounds/*/*.mp3
-assets/sounds/*/*.wav
-assets/*/*.png
+assets/**/*.wav
+assets/**/*.mp3
+assets/**/*.png
 
 # Binaries for programs and plugins
 *.exe
