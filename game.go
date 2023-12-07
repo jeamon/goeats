@@ -13,18 +13,17 @@ type item struct {
 }
 
 type Game struct {
-	num           int
-	faces         map[string]rl.Texture2D
-	actions       map[string]rl.Sound
-	fruits        []item
-	vegetables    []item
-	donuts        []item
-	lives         []item
-	sounds        map[string]rl.Sound
-	walker        Walker
-	foods         []*Food
-	score         Score
-	framesCounter int
+	num        int
+	faces      map[string]rl.Texture2D
+	actions    map[string]rl.Sound
+	fruits     []item
+	vegetables []item
+	donuts     []item
+	lives      []item
+	sounds     map[string]rl.Sound
+	sprite     Sprite
+	foods      []*Food
+	score      Score
 }
 
 func (g *Game) Init() {
@@ -34,7 +33,6 @@ func (g *Game) Init() {
 		g.foods[i] = &Food{change: true, kind: kind(i % 3)}
 	}
 	// append one life item to the foods list
-	// g.foods = append(g.foods, &Food{change: true, kind: L})
 	g.foods[10] = &Food{change: true, kind: L}
 
 	g.faces = make(map[string]rl.Texture2D, 4)
@@ -45,11 +43,13 @@ func (g *Game) Init() {
 	g.actions = make(map[string]rl.Sound, 3)
 	g.sounds = make(map[string]rl.Sound)
 
-	g.walker.velocity = 4
-	g.walker.size = rl.NewVector2(48/2, 48/2)
-	g.walker.position = rl.NewVector2(-2, 0)
-	g.walker.srcRec = rl.NewRectangle(0, 0, g.walker.size.X, g.walker.size.Y)
-	g.walker.dstRec = rl.NewRectangle(0, 0, g.walker.size.X*3, g.walker.size.Y*3)
+	g.sprite.velocity = 0.0
+	g.sprite.speed = 6
+	g.sprite.moving = false
+	g.sprite.position = rl.NewVector2(2, 2)
+	g.sprite.face = Right
+	g.sprite.idle = make(map[direction][]rl.Texture2D, 4)
+	g.sprite.run = make(map[direction][]rl.Texture2D, 4)
 }
 
 // Draw game textures
@@ -60,14 +60,14 @@ func (g *Game) draw() {
 	for _, food := range g.foods {
 		food.draw()
 	}
-	g.walker.draw()
+	g.sprite.draw()
 	rl.EndDrawing()
 }
 
 func (g *Game) collision(food *Food) bool {
-	centerX := g.walker.dstRec.X - g.walker.position.X + g.walker.size.X*3/2
-	centerY := g.walker.dstRec.Y - g.walker.position.Y + g.walker.size.Y*3/2
-	radius := (g.walker.size.X * 3) * float32(math.Sqrt(2)) / 2
+	centerX := g.sprite.position.X + spriteW/2
+	centerY := g.sprite.position.Y + spriteH/2
+	radius := float32(spriteW) * float32(math.Sqrt(2)) / 2
 	return rl.CheckCollisionPointCircle(food.position, rl.NewVector2(centerX, centerY), radius)
 }
 

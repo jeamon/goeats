@@ -26,7 +26,6 @@ func (s *Score) draw() {
 	rl.DrawText(d, screenW-rl.MeasureText(d, 20)-7, 53, 20, rl.DarkPurple)
 	rl.DrawText(f, screenW-rl.MeasureText(f, 20)-7, 76, 20, rl.DarkPurple)
 	rl.DrawText(v, screenW-rl.MeasureText(v, 20)-7, 99, 20, rl.DarkPurple)
-
 }
 
 func (s *Score) update(k kind) {

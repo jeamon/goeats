@@ -17,10 +17,20 @@ const (
 
 const (
 	cellsize = 40
-	screenW  = 960
-	screenH  = 640
+	//screenW  = 1280
+	//screenH  = 768
+
+	/*
+		InitWindow(0, 0, "Game");
+		sw = GetScreenWidth();
+		sh = GetScreenHeight();
+	*/
 )
 
+var (
+	screenW int32
+	screenH int32
+)
 var gamepad int32 = 0 // gamepad to track
 
 func checkerr(err error) {
@@ -32,30 +42,28 @@ func checkerr(err error) {
 func main() {
 	game := Game{}
 	game.Init()
-	rl.InitWindow(screenW, screenH, "Go & Eats")
+	rl.InitWindow(0, 0, "Go & Eats")
+	screenW = int32(rl.GetScreenWidth())
+	screenH = int32(rl.GetScreenHeight())
 	rl.InitAudioDevice()
 	rl.SetTargetFPS(60)
 	game.load()
 	game.score.sound = game.actions["level"]
 	game.randomize()
-
-	game.walker.direction = game.faces["right"]
-	game.walker.draw()
+	game.sprite.draw()
 	for !rl.WindowShouldClose() {
 		game.draw()
-		game.walker.moving = false
-		game.framesCounter++
+		game.sprite.moving = false
+		// game.framesCounter++
 		game.controls()
 		game.checkExpire()
 
-		if game.walker.moving {
-			if game.framesCounter%8 == 1 {
-				game.walker.frames++
-				game.walker.frames %= 2
+		if game.sprite.moving {
+			game.sprite.velocity += 0.3
+			if game.sprite.velocity >= 6 {
+				game.sprite.velocity = 0
 			}
 		}
-
-		game.walker.srcRec.X = game.walker.srcRec.Width * float32(game.walker.frames)
 	}
 
 	game.unload()

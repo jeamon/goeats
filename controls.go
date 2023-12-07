@@ -16,38 +16,38 @@ const (
 
 func (g *Game) controls() {
 	if rl.IsKeyDown(rl.KeyRight) || gamePadButtonPressed() == RT {
-		g.walker.direction = g.faces["right"]
-		if g.walker.position.X-g.walker.velocity > -(screenW - g.walker.size.X*3) {
-			g.walker.position.X -= g.walker.velocity
+		g.sprite.face = Right
+		if g.sprite.position.X+g.sprite.speed <= (float32(screenW) - spriteW) {
+			g.sprite.position.X += g.sprite.speed
 		}
-		g.walker.moving = true
+		g.sprite.moving = true
 		g.update()
 	}
 
 	if rl.IsKeyDown(rl.KeyLeft) || gamePadButtonPressed() == LT {
-		g.walker.direction = g.faces["left"]
-		if g.walker.position.X+g.walker.velocity < 0 {
-			g.walker.position.X += g.walker.velocity
+		g.sprite.face = Left
+		if g.sprite.position.X-g.sprite.speed >= 0 {
+			g.sprite.position.X -= g.sprite.speed
 		}
-		g.walker.moving = true
+		g.sprite.moving = true
 		g.update()
 	}
 
 	if rl.IsKeyDown(rl.KeyUp) || gamePadButtonPressed() == UP {
-		g.walker.direction = g.faces["up"]
-		if g.walker.position.Y+g.walker.velocity < 0 {
-			g.walker.position.Y += g.walker.velocity
+		g.sprite.face = Back
+		if g.sprite.position.Y-g.sprite.speed >= 0 {
+			g.sprite.position.Y -= g.sprite.speed
 		}
-		g.walker.moving = true
+		g.sprite.moving = true
 		g.update()
 	}
 
 	if rl.IsKeyDown(rl.KeyDown) || gamePadButtonPressed() == DN {
-		g.walker.direction = g.faces["down"]
-		if g.walker.position.Y-g.walker.velocity > -(screenH - g.walker.size.Y*3) {
-			g.walker.position.Y -= g.walker.velocity
+		g.sprite.face = Front
+		if g.sprite.position.Y+g.sprite.speed <= float32(screenH)-spriteH {
+			g.sprite.position.Y += g.sprite.speed
 		}
-		g.walker.moving = true
+		g.sprite.moving = true
 		g.update()
 	}
 }
