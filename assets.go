@@ -1,12 +1,20 @@
 package main
 
 import (
+	_ "embed"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
+
+//go:embed assets/faces/up.png
+var upBytes []byte
+
+//go:embed assets/faces/down.png
+var downBytes []byte
 
 func isPng(path string) bool {
 	return filepath.Ext(path) == ".png"
@@ -118,10 +126,41 @@ func (g *Game) load() {
 	}
 	f.Close()
 
-	g.faces["up"] = rl.LoadTexture("assets/faces/up.png")
+	rImage := rl.LoadImageFromMemory(".png", upBytes, int32(len(upBytes)))
+	// g.faces["up"] = rl.LoadTexture("assets/faces/up.png")
+	g.faces["up"] = rl.LoadTextureFromImage(rImage)
+
 	g.faces["down"] = rl.LoadTexture("assets/faces/down.png")
 	g.faces["left"] = rl.LoadTexture("assets/faces/left.png")
 	g.faces["right"] = rl.LoadTexture("assets/faces/right.png")
+
+	// load boy 4D sprites idle and run positions
+	var img string
+	for i := 0; i <= 5; i++ {
+		img = fmt.Sprintf("assets/boy/idle/back/%d.png", i+1)
+		g.sprite.idle[Back] = append(g.sprite.idle[Back], rl.LoadTexture(img))
+
+		img = fmt.Sprintf("assets/boy/idle/front/%d.png", i+1)
+		g.sprite.idle[Front] = append(g.sprite.idle[Front], rl.LoadTexture(img))
+
+		img = fmt.Sprintf("assets/boy/idle/left/%d.png", i+1)
+		g.sprite.idle[Left] = append(g.sprite.idle[Left], rl.LoadTexture(img))
+
+		img = fmt.Sprintf("assets/boy/idle/right/%d.png", i+1)
+		g.sprite.idle[Right] = append(g.sprite.idle[Right], rl.LoadTexture(img))
+
+		img = fmt.Sprintf("assets/boy/run/back/%d.png", i+1)
+		g.sprite.run[Back] = append(g.sprite.run[Back], rl.LoadTexture(img))
+
+		img = fmt.Sprintf("assets/boy/run/front/%d.png", i+1)
+		g.sprite.run[Front] = append(g.sprite.run[Front], rl.LoadTexture(img))
+
+		img = fmt.Sprintf("assets/boy/run/left/%d.png", i+1)
+		g.sprite.run[Left] = append(g.sprite.run[Left], rl.LoadTexture(img))
+
+		img = fmt.Sprintf("assets/boy/run/right/%d.png", i+1)
+		g.sprite.run[Right] = append(g.sprite.run[Right], rl.LoadTexture(img))
+	}
 
 	g.actions["eat"] = rl.LoadSound("assets/sounds/actions/eat.wav")
 	g.actions["life"] = rl.LoadSound("assets/sounds/actions/life.mp3")
@@ -148,6 +187,18 @@ func (g *Game) unload() {
 
 	for _, face := range g.faces {
 		rl.UnloadTexture(face)
+	}
+
+	for _, rtxt := range g.sprite.idle {
+		for _, txt := range rtxt {
+			rl.UnloadTexture(txt)
+		}
+	}
+
+	for _, rtxt := range g.sprite.run {
+		for _, txt := range rtxt {
+			rl.UnloadTexture(txt)
+		}
 	}
 
 	for _, s := range g.sounds {
