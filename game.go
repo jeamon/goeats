@@ -38,7 +38,7 @@ func (g *Game) Init() {
 	g.foods[10] = &Food{change: true, kind: L}
 
 	g.faces = make(map[string]rl.Texture2D, 4)
-	g.vegetables = make([]item, 0, 68)
+	g.vegetables = make([]item, 0, 98)
 	g.fruits = make([]item, 0, 44)
 	g.donuts = make([]item, 0, 12)
 	g.lives = make([]item, 0, 4)
