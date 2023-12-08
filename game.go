@@ -2,6 +2,8 @@ package main
 
 import (
 	"math"
+	"os"
+	"strconv"
 	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -26,7 +28,25 @@ type Game struct {
 	score      Score
 }
 
+// loadsettings loads environment variables to set screen width and height.
+// min value for width is 800 and for height is 500
+func loadsettings() {
+	w := os.Getenv("GOEATS_SCREEN_WIDTH")
+	h := os.Getenv("GOEATS_SCREEN_HEIGHT")
+	if w != "" {
+		if v, err := strconv.Atoi(w); err == nil && v >= 800 {
+			screenW = int32(v)
+		}
+	}
+	if h != "" {
+		if v, err := strconv.Atoi(h); err == nil && v >= 500 {
+			screenH = int32(v)
+		}
+	}
+}
+
 func (g *Game) Init() {
+	loadsettings()
 	g.num = 11 // 10 foods + 1 life
 	g.foods = make([]*Food, g.num)
 	for i := 0; i < g.num-1; i++ {
@@ -44,7 +64,7 @@ func (g *Game) Init() {
 	g.sounds = make(map[string]rl.Sound)
 
 	g.sprite.velocity = 0.0
-	g.sprite.speed = 6
+	g.sprite.speed = 7
 	g.sprite.moving = false
 	g.sprite.position = rl.NewVector2(2, 2)
 	g.sprite.face = Right

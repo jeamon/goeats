@@ -15,22 +15,13 @@ const (
 	L kind = 3 // life item
 )
 
-const (
-	cellsize = 40
-	//screenW  = 1280
-	//screenH  = 768
-
-	/*
-		InitWindow(0, 0, "Game");
-		sw = GetScreenWidth();
-		sh = GetScreenHeight();
-	*/
-)
+const cellsize = 40
 
 var (
-	screenW int32
-	screenH int32
+	screenW int32 = 1280
+	screenH int32 = 768
 )
+
 var gamepad int32 = 0 // gamepad to track
 
 func checkerr(err error) {
@@ -42,9 +33,7 @@ func checkerr(err error) {
 func main() {
 	game := Game{}
 	game.Init()
-	rl.InitWindow(0, 0, "Go & Eats")
-	screenW = int32(rl.GetScreenWidth())
-	screenH = int32(rl.GetScreenHeight())
+	rl.InitWindow(screenW, screenH, "Go & Eats")
 	rl.InitAudioDevice()
 	rl.SetTargetFPS(60)
 	game.load()
@@ -54,7 +43,6 @@ func main() {
 	for !rl.WindowShouldClose() {
 		game.draw()
 		game.sprite.moving = false
-		// game.framesCounter++
 		game.controls()
 		game.checkExpire()
 
