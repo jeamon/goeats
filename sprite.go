@@ -35,7 +35,7 @@ func (s *Sprite) draw() {
 		txt := s.run[s.face][int(s.velocity)]
 		rl.DrawTexture(txt, int32(s.position.X), int32(s.position.Y), rl.White)
 	} else {
-		txt := s.idle[s.face][int(s.velocity)]
+		txt := s.idle[s.face][int(rl.GetTime())%6]
 		rl.DrawTexture(txt, int32(s.position.X), int32(s.position.Y), rl.White)
 	}
 
