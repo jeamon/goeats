@@ -124,6 +124,18 @@ func (g *Game) load() {
 		name := strings.TrimSuffix(fn, ".mp3")
 		g.sounds[name] = rl.LoadSound("assets/sounds/donuts/" + fn)
 	}
+
+	f, err = os.Open("assets/balls")
+	checkerr(err)
+	filenames, err = f.Readdirnames(0)
+	checkerr(err)
+	for _, fn := range filenames {
+		if !isPng(fn) {
+			continue
+		}
+		g.balls = append(g.balls, item{picture: rl.LoadTexture("assets/balls/" + fn)})
+	}
+
 	f.Close()
 
 	rImage := rl.LoadImageFromMemory(".png", upBytes, int32(len(upBytes)))
@@ -207,5 +219,9 @@ func (g *Game) unload() {
 
 	for _, s := range g.actions {
 		rl.UnloadSound(s)
+	}
+
+	for _, b := range g.balls {
+		rl.UnloadTexture(b.picture)
 	}
 }

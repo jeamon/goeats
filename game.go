@@ -22,9 +22,11 @@ type Game struct {
 	vegetables []item
 	donuts     []item
 	lives      []item
+	balls      []item // balls to use as enemies
 	sounds     map[string]rl.Sound
 	sprite     Sprite
 	foods      []*Food
+	enemies    []enemy
 	score      Score
 }
 
@@ -45,7 +47,7 @@ func loadsettings() {
 	}
 }
 
-func (g *Game) Init() {
+func (g *Game) init() {
 	loadsettings()
 	g.num = 11 // 10 foods + 1 life
 	g.foods = make([]*Food, g.num)
@@ -70,6 +72,8 @@ func (g *Game) Init() {
 	g.sprite.face = Right
 	g.sprite.idle = make(map[direction][]rl.Texture2D, 4)
 	g.sprite.run = make(map[direction][]rl.Texture2D, 4)
+
+	g.balls = make([]item, 0, 4)
 }
 
 // Draw game textures
@@ -77,11 +81,39 @@ func (g *Game) draw() {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.Beige)
 	g.score.draw()
+	g.drawFoods()
+	g.drawEnemies()
+	g.sprite.draw()
+	rl.EndDrawing()
+}
+
+func (g *Game) drawFoods() {
 	for _, food := range g.foods {
 		food.draw()
 	}
-	g.sprite.draw()
-	rl.EndDrawing()
+}
+
+func (g *Game) drawEnemies() {
+	// add 1 ball each level with a max of numbers of balls
+	if len(g.enemies) < len(g.balls) && g.score.level != len(g.enemies) {
+		g.addEnemy()
+	}
+
+	for _, e := range g.enemies {
+		if g.score.level <= 7 {
+			e.speed(float32(g.score.level))
+		}
+		e.draw()
+	}
+}
+
+func (g *Game) addEnemy() {
+	e := &ball{}
+	item := g.balls[len(g.enemies)]
+	e.picture = item.picture
+	e.speedX = float32(g.score.level)
+	e.speedY = float32(g.score.level)
+	g.enemies = append(g.enemies, e)
 }
 
 func (g *Game) collision(food *Food) bool {

@@ -32,7 +32,7 @@ func checkerr(err error) {
 
 func main() {
 	game := Game{}
-	game.Init()
+	game.init()
 	rl.InitWindow(screenW, screenH, "Go & Eats")
 	rl.InitAudioDevice()
 	rl.SetTargetFPS(60)
