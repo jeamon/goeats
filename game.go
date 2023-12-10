@@ -66,7 +66,7 @@ func (g *Game) Init() {
 	g.sprite.velocity = 0.0
 	g.sprite.speed = 7
 	g.sprite.moving = false
-	g.sprite.position = rl.NewVector2(2, 2)
+	g.sprite.position = rl.NewVector2(2, float32(screenH/2))
 	g.sprite.face = Right
 	g.sprite.idle = make(map[direction][]rl.Texture2D, 4)
 	g.sprite.run = make(map[direction][]rl.Texture2D, 4)
