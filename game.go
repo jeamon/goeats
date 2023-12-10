@@ -52,14 +52,14 @@ func (g *Game) Init() {
 	for i := 0; i < g.num-1; i++ {
 		g.foods[i] = &Food{change: true, kind: kind(i % 3)}
 	}
-	// append one life item to the foods list
+	// append 1 life items to the foods list
 	g.foods[10] = &Food{change: true, kind: L}
 
 	g.faces = make(map[string]rl.Texture2D, 4)
 	g.vegetables = make([]item, 0, 98)
 	g.fruits = make([]item, 0, 44)
 	g.donuts = make([]item, 0, 12)
-	g.lives = make([]item, 0, 4)
+	g.lives = make([]item, 0, 5)
 	g.actions = make(map[string]rl.Sound, 3)
 	g.sounds = make(map[string]rl.Sound)
 

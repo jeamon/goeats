@@ -28,6 +28,15 @@ func (f *Food) randomize(items *[]item) {
 }
 
 func (f *Food) draw() {
-	// rl.DrawTextureV(f.picture, f.position, rl.White)
-	rl.DrawTextureEx(f.picture, f.position, float32(rl.GetTime()*180), 1.0, rl.White)
+	if f.kind == L {
+		rl.DrawTextureEx(f.picture, f.position, float32(rl.GetTime()*180), 1.0, rl.White)
+	} else if f.kind == V {
+		rl.DrawTextureEx(f.picture, f.position, float32(rl.GetTime()*90), 1.0, rl.White)
+	} else if f.kind == F {
+		rl.DrawTextureEx(f.picture, f.position, float32(rl.GetTime()*-90), 1.0, rl.White)
+	} else if f.kind == D {
+		rl.DrawTextureEx(f.picture, f.position, -float32(rl.GetTime()*90), 1.0, rl.White)
+	} else {
+		rl.DrawTextureV(f.picture, f.position, rl.White)
+	}
 }
