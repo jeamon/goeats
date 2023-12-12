@@ -175,7 +175,7 @@ func (g *Game) load() {
 	}
 
 	g.actions["eat"] = rl.LoadSound("assets/sounds/actions/eat.wav")
-	g.actions["life"] = rl.LoadSound("assets/sounds/actions/life.mp3")
+	g.actions["life"] = rl.LoadSound("assets/sounds/actions/life.wav")
 	g.actions["level"] = rl.LoadSound("assets/sounds/actions/level.mp3")
 }
 
