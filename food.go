@@ -40,3 +40,7 @@ func (f *Food) draw() {
 		rl.DrawTextureV(f.picture, f.position, rl.White)
 	}
 }
+
+func (f *Food) collision(center rl.Vector2, radius float32) bool {
+	return rl.CheckCollisionPointCircle(f.position, center, radius)
+}
