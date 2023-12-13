@@ -37,7 +37,7 @@ func (s *Score) update(k kind) {
 	case D:
 		s.donuts++
 	case L:
-		s.lives++
+		s.lives += 100
 	}
 	// increment level after 10 items eaten
 	if (s.level + 1) == (s.fruits+s.veggies+s.donuts)/10 {
