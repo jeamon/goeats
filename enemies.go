@@ -7,6 +7,7 @@ import (
 type enemy interface {
 	speed(float32)
 	draw()
+	collision(center rl.Vector2, radius float32) bool // check collision with player circle
 }
 
 type ball struct {
@@ -43,4 +44,8 @@ func (b *ball) speed(s float32) {
 	} else {
 		b.speedY = -s
 	}
+}
+
+func (b *ball) collision(center rl.Vector2, radius float32) bool {
+	return rl.CheckCollisionCircleRec(center, radius, rl.NewRectangle(b.position.X, b.position.Y, float32(b.picture.Width), float32(b.picture.Height)))
 }
