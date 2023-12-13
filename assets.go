@@ -177,6 +177,7 @@ func (g *Game) load() {
 	g.actions["eat"] = rl.LoadSound("assets/sounds/actions/eat.wav")
 	g.actions["life"] = rl.LoadSound("assets/sounds/actions/life.wav")
 	g.actions["level"] = rl.LoadSound("assets/sounds/actions/level.mp3")
+	g.actions["hurt"] = rl.LoadSound("assets/sounds/actions/hurt.wav")
 }
 
 // Unload - Unload resources
