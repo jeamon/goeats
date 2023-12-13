@@ -94,6 +94,8 @@ func (g *Game) drawFoods() {
 }
 
 func (g *Game) drawEnemies() {
+	center := rl.Vector2{X: g.sprite.position.X + spriteW/2, Y: g.sprite.position.Y + spriteH/2}
+	radius := float32(spriteW) * float32(math.Sqrt(2)) / 2
 	// add 1 ball each level with a max of numbers of balls
 	if len(g.enemies) < len(g.balls) && g.score.level != len(g.enemies) {
 		g.addEnemy()
@@ -104,6 +106,11 @@ func (g *Game) drawEnemies() {
 			e.speed(float32(g.score.level))
 		}
 		e.draw()
+
+		if e.collision(center, radius) {
+			rl.PlaySound(g.actions["hurt"])
+			g.score.lives--
+		}
 	}
 }
 
@@ -116,17 +123,12 @@ func (g *Game) addEnemy() {
 	g.enemies = append(g.enemies, e)
 }
 
-func (g *Game) collision(food *Food) bool {
-	centerX := g.sprite.position.X + spriteW/2
-	centerY := g.sprite.position.Y + spriteH/2
-	radius := float32(spriteW) * float32(math.Sqrt(2)) / 2
-	return rl.CheckCollisionPointCircle(food.position, rl.NewVector2(centerX, centerY), radius)
-}
-
 func (g *Game) update() {
+	center := rl.Vector2{X: g.sprite.position.X + spriteW/2, Y: g.sprite.position.Y + spriteH/2}
+	radius := float32(spriteW) * float32(math.Sqrt(2)) / 2
 	for _, food := range g.foods {
 		food.change = false
-		if g.collision(food) {
+		if food.collision(center, radius) {
 			if food.kind == L {
 				rl.PlaySound(g.actions["life"])
 			} else {
