@@ -1,6 +1,8 @@
 package main
 
 import (
+	"math"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -47,5 +49,8 @@ func (b *ball) speed(s float32) {
 }
 
 func (b *ball) collision(center rl.Vector2, radius float32) bool {
-	return rl.CheckCollisionCircleRec(center, radius, rl.NewRectangle(b.position.X, b.position.Y, float32(b.picture.Width), float32(b.picture.Height)))
+	return rl.CheckCollisionCircles(
+		rl.Vector2{X: b.position.X + float32(b.picture.Width)/2, Y: b.position.Y + float32(b.picture.Height)/2},
+		(float32(b.picture.Width)*float32(math.Sqrt(2))/2)-9,
+		center, radius)
 }
