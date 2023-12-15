@@ -96,8 +96,8 @@ func (g *Game) drawFoods() {
 func (g *Game) drawEnemies() {
 	center := rl.Vector2{X: g.sprite.position.X + spriteW/2, Y: g.sprite.position.Y + spriteH/2}
 	radius := float32(spriteW) * float32(math.Sqrt(2)) / 2
-	// add 1 ball each level with a max of numbers of balls
-	if len(g.enemies) < len(g.balls) && g.score.level != len(g.enemies) {
+	// add 1 ball-based enemy each 3rd level with a max of available balls
+	if g.score.level > 0 && g.score.level%3 == 0 && (g.score.level/3) != len(g.enemies) && len(g.enemies) < len(g.balls) {
 		g.addEnemy()
 	}
 
