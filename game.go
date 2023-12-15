@@ -102,8 +102,11 @@ func (g *Game) drawEnemies() {
 	}
 
 	for _, e := range g.enemies {
-		if g.score.level <= 7 {
-			e.speed(float32(g.score.level))
+		// increase enemy speed with a step of half the level + 1 on both axises while
+		// making sure it is done until level 12 rather than 3*len(g.balls) in order to
+		// cap the speed to a max of 7.
+		if g.score.level <= 12 {
+			e.speed(float32(g.score.level/2 + 1))
 		}
 		e.draw()
 
@@ -118,8 +121,6 @@ func (g *Game) addEnemy() {
 	e := &ball{}
 	item := g.balls[len(g.enemies)]
 	e.picture = item.picture
-	e.speedX = float32(g.score.level)
-	e.speedY = float32(g.score.level)
 	g.enemies = append(g.enemies, e)
 }
 

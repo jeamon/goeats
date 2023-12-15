@@ -36,12 +36,12 @@ func (b *ball) update() {
 }
 
 func (b *ball) speed(s float32) {
-	if b.speedX > 0 {
+	if b.speedX >= 0 {
 		b.speedX = s
 	} else {
 		b.speedX = -s
 	}
-	if b.speedY > 0 {
+	if b.speedY >= 0 {
 		b.speedY = s
 	} else {
 		b.speedY = -s
