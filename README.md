@@ -6,6 +6,9 @@ Move around a scene to collect (eat) foods (vegetables - fruits - lives - donuts
 fruits and vegetables. At the same time develop strategy to escape traps and enemies. Just ***Go & Eat For Fun*** :)
 
 
+![overview of GoEats](https://github.com/jeamon/goeats/blob/master/cover.PNG?raw=true)
+
+
 ## Features / Goals
 
 * use computer keyboard arrow keys to move up/down left/right
@@ -15,6 +18,8 @@ fruits and vegetables. At the same time develop strategy to escape traps and ene
 * display number of foods (fruits, veggies, donuts) & life eaten
 * make different noise when food eaten or life collected
 * make different noise when walker reaches another level 
+* configurable game screen size with environment variables
+* add ball-based enemy at each 3rd level and increase their speed
 
 * display menu to choose the walker (boy or girl) and language
 * view in real-time the exact coordinates of your position
@@ -23,7 +28,7 @@ fruits and vegetables. At the same time develop strategy to escape traps and ene
 
 ## Demo
 
-upcoming on my youtube channel. [click here](https://www.youtube.com/channel/UCRl_dpOgI72wO0WvWlguOEg)
+view the demo on my youtube channel. [click here](https://youtu.be/dwwsfH9LGKA)
 
 
 ## Download
