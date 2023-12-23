@@ -36,7 +36,7 @@ func main() {
 	rl.InitWindow(screenW, screenH, "Go & Eats")
 	rl.InitAudioDevice()
 	rl.SetTargetFPS(60)
-	game.load()
+	game.loadAssets()
 	game.score.sound = game.actions["level"]
 	game.randomize()
 	game.sprite.draw()

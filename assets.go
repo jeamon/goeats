@@ -1,8 +1,11 @@
 package main
 
 import (
-	_ "embed"
+	"embed"
 	"fmt"
+	"path"
+
+	_ "image/png"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,88 +13,64 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-//go:embed assets/faces/up.png
-var upBytes []byte
+//go:embed assets/*/*.png
+//go:embed assets/*/*/*/*.png
+var pictures embed.FS
 
-//go:embed assets/faces/down.png
-var downBytes []byte
-
-func isPng(path string) bool {
-	return filepath.Ext(path) == ".png"
-}
+//go:embed assets/sounds/*/*.mp3
+//go:embed assets/sounds/*/*.wav
+var sounds embed.FS
 
 func isMp3(path string) bool {
 	return filepath.Ext(path) == ".mp3"
 }
 
-// Load - Load resources
-func (g *Game) load() {
-	f, err := os.Open("assets/fruits")
+func loadPictures(dir string, m *[]item) {
+	entries, err := pictures.ReadDir(dir)
 	checkerr(err)
-	filenames, err := f.Readdirnames(0)
-	checkerr(err)
-	for _, fn := range filenames {
-		if !isPng(fn) {
-			continue
-		}
-		name, _, found := strings.Cut(fn, "_")
+	for _, e := range entries {
+		name, _, found := strings.Cut(e.Name(), "_")
 		if !found {
 			name = strings.TrimSuffix(name, ".png")
 		}
-		g.fruits = append(g.fruits, item{name, rl.LoadTexture("assets/fruits/" + fn)})
+		imgBytes, err := pictures.ReadFile(path.Join(dir, e.Name()))
+		checkerr(err)
+		rImg := rl.LoadImageFromMemory(".png", imgBytes, int32(len(imgBytes)))
+		*m = append(*m, item{name, rl.LoadTextureFromImage(rImg)})
 	}
-	f.Close()
+}
 
-	f, err = os.Open("assets/vegetables")
+func loadFaces(faces map[string]rl.Texture2D) {
+	imgByte, err := pictures.ReadFile("assets/faces/up.png")
 	checkerr(err)
-	filenames, err = f.Readdirnames(0)
-	checkerr(err)
-	for _, fn := range filenames {
-		if !isPng(fn) {
-			continue
-		}
-		name, _, found := strings.Cut(fn, "_")
-		if !found {
-			name = strings.TrimSuffix(name, ".png")
-		}
-		g.vegetables = append(g.vegetables, item{name, rl.LoadTexture("assets/vegetables/" + fn)})
-	}
-	f.Close()
+	faces["up"] = rl.LoadTextureFromImage(rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte))))
 
-	f, err = os.Open("assets/donuts")
+	imgByte, err = pictures.ReadFile("assets/faces/down.png")
 	checkerr(err)
-	filenames, err = f.Readdirnames(0)
-	checkerr(err)
-	for _, fn := range filenames {
-		if !isPng(fn) {
-			continue
-		}
-		name, _, found := strings.Cut(fn, "_")
-		if !found {
-			name = strings.TrimSuffix(name, ".png")
-		}
-		g.donuts = append(g.donuts, item{name, rl.LoadTexture("assets/donuts/" + fn)})
-	}
+	faces["down"] = rl.LoadTextureFromImage(rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte))))
 
-	f, err = os.Open("assets/lives")
+	imgByte, err = pictures.ReadFile("assets/faces/left.png")
 	checkerr(err)
-	filenames, err = f.Readdirnames(0)
+	faces["left"] = rl.LoadTextureFromImage(rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte))))
+
+	imgByte, err = pictures.ReadFile("assets/faces/right.png")
 	checkerr(err)
-	for _, fn := range filenames {
-		if !isPng(fn) {
-			continue
-		}
-		name, _, found := strings.Cut(fn, "_")
-		if !found {
-			name = strings.TrimSuffix(name, ".png")
-		}
-		g.lives = append(g.lives, item{name, rl.LoadTexture("assets/lives/" + fn)})
-	}
+	faces["right"] = rl.LoadTextureFromImage(rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte))))
+}
+
+// loadAssets - Load resources
+func (g *Game) loadAssets() {
+	loadPictures("assets/fruits", &g.fruits)
+	loadPictures("assets/vegetables", &g.vegetables)
+	loadPictures("assets/donuts", &g.donuts)
+	loadPictures("assets/lives", &g.lives)
+	loadPictures("assets/balls", &g.balls)
+	loadFaces(g.faces)
 
 	// load foods sounds
-	f, err = os.Open("assets/sounds/fruits")
+	f, err := os.Open("assets/sounds/fruits")
 	checkerr(err)
-	filenames, err = f.Readdirnames(0)
+	filenames, err := f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
 		if !isMp3(fn) {
@@ -125,53 +104,56 @@ func (g *Game) load() {
 		g.sounds[name] = rl.LoadSound("assets/sounds/donuts/" + fn)
 	}
 
-	f, err = os.Open("assets/balls")
-	checkerr(err)
-	filenames, err = f.Readdirnames(0)
-	checkerr(err)
-	for _, fn := range filenames {
-		if !isPng(fn) {
-			continue
-		}
-		g.balls = append(g.balls, item{picture: rl.LoadTexture("assets/balls/" + fn)})
-	}
-
-	f.Close()
-
-	rImage := rl.LoadImageFromMemory(".png", upBytes, int32(len(upBytes)))
-	// g.faces["up"] = rl.LoadTexture("assets/faces/up.png")
-	g.faces["up"] = rl.LoadTextureFromImage(rImage)
-
-	g.faces["down"] = rl.LoadTexture("assets/faces/down.png")
-	g.faces["left"] = rl.LoadTexture("assets/faces/left.png")
-	g.faces["right"] = rl.LoadTexture("assets/faces/right.png")
-
 	// load boy 4D sprites idle and run positions
-	var img string
+	var imgPath string
 	for i := 0; i <= 5; i++ {
-		img = fmt.Sprintf("assets/boy/idle/back/%d.png", i+1)
-		g.sprite.idle[Back] = append(g.sprite.idle[Back], rl.LoadTexture(img))
+		imgPath = fmt.Sprintf("assets/boy/idle/back/%d.png", i+1)
+		imgByte, err := pictures.ReadFile(imgPath)
+		checkerr(err)
+		rImg := rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		g.sprite.idle[Back] = append(g.sprite.idle[Back], rl.LoadTextureFromImage(rImg))
 
-		img = fmt.Sprintf("assets/boy/idle/front/%d.png", i+1)
-		g.sprite.idle[Front] = append(g.sprite.idle[Front], rl.LoadTexture(img))
+		imgPath = fmt.Sprintf("assets/boy/idle/front/%d.png", i+1)
+		imgByte, err = pictures.ReadFile(imgPath)
+		checkerr(err)
+		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		g.sprite.idle[Front] = append(g.sprite.idle[Front], rl.LoadTextureFromImage(rImg))
 
-		img = fmt.Sprintf("assets/boy/idle/left/%d.png", i+1)
-		g.sprite.idle[Left] = append(g.sprite.idle[Left], rl.LoadTexture(img))
+		imgPath = fmt.Sprintf("assets/boy/idle/left/%d.png", i+1)
+		imgByte, err = pictures.ReadFile(imgPath)
+		checkerr(err)
+		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		g.sprite.idle[Left] = append(g.sprite.idle[Left], rl.LoadTextureFromImage(rImg))
 
-		img = fmt.Sprintf("assets/boy/idle/right/%d.png", i+1)
-		g.sprite.idle[Right] = append(g.sprite.idle[Right], rl.LoadTexture(img))
+		imgPath = fmt.Sprintf("assets/boy/idle/right/%d.png", i+1)
+		imgByte, err = pictures.ReadFile(imgPath)
+		checkerr(err)
+		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		g.sprite.idle[Right] = append(g.sprite.idle[Right], rl.LoadTextureFromImage(rImg))
 
-		img = fmt.Sprintf("assets/boy/run/back/%d.png", i+1)
-		g.sprite.run[Back] = append(g.sprite.run[Back], rl.LoadTexture(img))
+		imgPath = fmt.Sprintf("assets/boy/run/back/%d.png", i+1)
+		imgByte, err = pictures.ReadFile(imgPath)
+		checkerr(err)
+		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		g.sprite.run[Back] = append(g.sprite.run[Back], rl.LoadTextureFromImage(rImg))
 
-		img = fmt.Sprintf("assets/boy/run/front/%d.png", i+1)
-		g.sprite.run[Front] = append(g.sprite.run[Front], rl.LoadTexture(img))
+		imgPath = fmt.Sprintf("assets/boy/run/front/%d.png", i+1)
+		imgByte, err = pictures.ReadFile(imgPath)
+		checkerr(err)
+		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		g.sprite.run[Front] = append(g.sprite.run[Front], rl.LoadTextureFromImage(rImg))
 
-		img = fmt.Sprintf("assets/boy/run/left/%d.png", i+1)
-		g.sprite.run[Left] = append(g.sprite.run[Left], rl.LoadTexture(img))
+		imgPath = fmt.Sprintf("assets/boy/run/left/%d.png", i+1)
+		imgByte, err = pictures.ReadFile(imgPath)
+		checkerr(err)
+		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		g.sprite.run[Left] = append(g.sprite.run[Left], rl.LoadTextureFromImage(rImg))
 
-		img = fmt.Sprintf("assets/boy/run/right/%d.png", i+1)
-		g.sprite.run[Right] = append(g.sprite.run[Right], rl.LoadTexture(img))
+		imgPath = fmt.Sprintf("assets/boy/run/right/%d.png", i+1)
+		imgByte, err = pictures.ReadFile(imgPath)
+		checkerr(err)
+		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		g.sprite.run[Right] = append(g.sprite.run[Right], rl.LoadTextureFromImage(rImg))
 	}
 
 	g.actions["eat"] = rl.LoadSound("assets/sounds/actions/eat.wav")
