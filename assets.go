@@ -58,6 +58,12 @@ func loadFaces(faces map[string]rl.Texture2D) {
 	faces["right"] = rl.LoadTextureFromImage(rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte))))
 }
 
+func getImageFromPictures(path string) *rl.Image {
+	imgByte, err := pictures.ReadFile(path)
+	checkerr(err)
+	return rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+}
+
 // loadAssets - Load resources
 func (g *Game) loadAssets() {
 	loadPictures("assets/fruits", &g.fruits)
@@ -105,54 +111,30 @@ func (g *Game) loadAssets() {
 	}
 
 	// load boy 4D sprites idle and run positions
-	var imgPath string
+	var rImg *rl.Image
 	for i := 0; i <= 5; i++ {
-		imgPath = fmt.Sprintf("assets/boy/idle/back/%d.png", i+1)
-		imgByte, err := pictures.ReadFile(imgPath)
-		checkerr(err)
-		rImg := rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		rImg = getImageFromPictures(fmt.Sprintf("assets/boy/idle/back/%d.png", i+1))
 		g.sprite.idle[Back] = append(g.sprite.idle[Back], rl.LoadTextureFromImage(rImg))
 
-		imgPath = fmt.Sprintf("assets/boy/idle/front/%d.png", i+1)
-		imgByte, err = pictures.ReadFile(imgPath)
-		checkerr(err)
-		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		rImg = getImageFromPictures(fmt.Sprintf("assets/boy/idle/front/%d.png", i+1))
 		g.sprite.idle[Front] = append(g.sprite.idle[Front], rl.LoadTextureFromImage(rImg))
 
-		imgPath = fmt.Sprintf("assets/boy/idle/left/%d.png", i+1)
-		imgByte, err = pictures.ReadFile(imgPath)
-		checkerr(err)
-		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		rImg = getImageFromPictures(fmt.Sprintf("assets/boy/idle/left/%d.png", i+1))
 		g.sprite.idle[Left] = append(g.sprite.idle[Left], rl.LoadTextureFromImage(rImg))
 
-		imgPath = fmt.Sprintf("assets/boy/idle/right/%d.png", i+1)
-		imgByte, err = pictures.ReadFile(imgPath)
-		checkerr(err)
-		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		rImg = getImageFromPictures(fmt.Sprintf("assets/boy/idle/right/%d.png", i+1))
 		g.sprite.idle[Right] = append(g.sprite.idle[Right], rl.LoadTextureFromImage(rImg))
 
-		imgPath = fmt.Sprintf("assets/boy/run/back/%d.png", i+1)
-		imgByte, err = pictures.ReadFile(imgPath)
-		checkerr(err)
-		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		rImg = getImageFromPictures(fmt.Sprintf("assets/boy/run/back/%d.png", i+1))
 		g.sprite.run[Back] = append(g.sprite.run[Back], rl.LoadTextureFromImage(rImg))
 
-		imgPath = fmt.Sprintf("assets/boy/run/front/%d.png", i+1)
-		imgByte, err = pictures.ReadFile(imgPath)
-		checkerr(err)
-		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		rImg = getImageFromPictures(fmt.Sprintf("assets/boy/run/front/%d.png", i+1))
 		g.sprite.run[Front] = append(g.sprite.run[Front], rl.LoadTextureFromImage(rImg))
 
-		imgPath = fmt.Sprintf("assets/boy/run/left/%d.png", i+1)
-		imgByte, err = pictures.ReadFile(imgPath)
-		checkerr(err)
-		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		rImg = getImageFromPictures(fmt.Sprintf("assets/boy/run/left/%d.png", i+1))
 		g.sprite.run[Left] = append(g.sprite.run[Left], rl.LoadTextureFromImage(rImg))
 
-		imgPath = fmt.Sprintf("assets/boy/run/right/%d.png", i+1)
-		imgByte, err = pictures.ReadFile(imgPath)
-		checkerr(err)
-		rImg = rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
+		rImg = getImageFromPictures(fmt.Sprintf("assets/boy/run/right/%d.png", i+1))
 		g.sprite.run[Right] = append(g.sprite.run[Right], rl.LoadTextureFromImage(rImg))
 	}
 
