@@ -28,6 +28,7 @@ type Sprite struct {
 	velocity float32
 	speed    float32
 	position rl.Vector2
+	radius   float32 // player's circle radius
 }
 
 func (s *Sprite) draw() {

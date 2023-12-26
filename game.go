@@ -72,6 +72,7 @@ func (g *Game) init() {
 	g.sprite.face = Right
 	g.sprite.idle = make(map[direction][]rl.Texture2D, 4)
 	g.sprite.run = make(map[direction][]rl.Texture2D, 4)
+	g.sprite.radius = float32(spriteW) * float32(math.Sqrt(2)) / 2
 
 	g.balls = make([]item, 0, 4)
 }
@@ -95,7 +96,6 @@ func (g *Game) drawFoods() {
 
 func (g *Game) drawEnemies() {
 	center := rl.Vector2{X: g.sprite.position.X + spriteW/2, Y: g.sprite.position.Y + spriteH/2}
-	radius := float32(spriteW) * float32(math.Sqrt(2)) / 2
 	// add 1 ball-based enemy each 3rd level with a max of available balls
 	if g.score.level > 0 && g.score.level%3 == 0 && (g.score.level/3) != len(g.enemies) && len(g.enemies) < len(g.balls) {
 		g.addEnemy()
@@ -110,7 +110,7 @@ func (g *Game) drawEnemies() {
 		}
 		e.draw()
 
-		if e.collision(center, radius) {
+		if e.collision(center, g.sprite.radius) {
 			rl.PlaySound(g.actions["hurt"])
 			g.score.lives--
 		}
@@ -126,10 +126,9 @@ func (g *Game) addEnemy() {
 
 func (g *Game) update() {
 	center := rl.Vector2{X: g.sprite.position.X + spriteW/2, Y: g.sprite.position.Y + spriteH/2}
-	radius := float32(spriteW) * float32(math.Sqrt(2)) / 2
 	for _, food := range g.foods {
 		food.change = false
-		if food.collision(center, radius) {
+		if food.collision(center, g.sprite.radius) {
 			if food.kind == L {
 				rl.PlaySound(g.actions["life"])
 			} else {
