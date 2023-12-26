@@ -3,10 +3,8 @@ package main
 import (
 	"embed"
 	"fmt"
-	"path"
-
-	_ "image/png"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
