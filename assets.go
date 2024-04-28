@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"fmt"
-	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -61,8 +60,24 @@ func getImageFromPictures(path string) *rl.Image {
 	return rl.LoadImageFromMemory(".png", imgByte, int32(len(imgByte)))
 }
 
+func loadSounds(dir string, m map[string]rl.Sound) {
+	entries, err := sounds.ReadDir(dir)
+	checkerr(err)
+	for _, e := range entries {
+		if !isWav(e.Name()) {
+			continue
+		}
+		name := strings.TrimSuffix(e.Name(), ".wav")
+		wavBytes, err := sounds.ReadFile(path.Join(dir, e.Name()))
+		checkerr(err)
+		rWav := rl.LoadWaveFromMemory(".wav", wavBytes, int32(len(wavBytes)))
+		m[name] = rl.LoadSoundFromWave(rWav)
+	}
+}
+
 // loadAssets - Load resources
 func (g *Game) loadAssets() {
+	// load pictures
 	loadPictures("assets/fruits", &g.fruits)
 	loadPictures("assets/vegetables", &g.vegetables)
 	loadPictures("assets/donuts", &g.donuts)
@@ -70,42 +85,11 @@ func (g *Game) loadAssets() {
 	loadPictures("assets/balls", &g.balls)
 	loadFaces(g.faces)
 
-	// load foods sounds
-	f, err := os.Open("assets/sounds/fruits")
-	checkerr(err)
-	filenames, err := f.Readdirnames(0)
-	checkerr(err)
-	for _, fn := range filenames {
-		if !isWav(fn) {
-			continue
-		}
-		name := strings.TrimSuffix(fn, ".wav")
-		g.sounds[name] = rl.LoadSound("assets/sounds/fruits/" + fn)
-	}
-
-	f, err = os.Open("assets/sounds/vegetables")
-	checkerr(err)
-	filenames, err = f.Readdirnames(0)
-	checkerr(err)
-	for _, fn := range filenames {
-		if !isWav(fn) {
-			continue
-		}
-		name := strings.TrimSuffix(fn, ".wav")
-		g.sounds[name] = rl.LoadSound("assets/sounds/vegetables/" + fn)
-	}
-
-	f, err = os.Open("assets/sounds/donuts")
-	checkerr(err)
-	filenames, err = f.Readdirnames(0)
-	checkerr(err)
-	for _, fn := range filenames {
-		if !isWav(fn) {
-			continue
-		}
-		name := strings.TrimSuffix(fn, ".wav")
-		g.sounds[name] = rl.LoadSound("assets/sounds/donuts/" + fn)
-	}
+	// load fruits - vegetables - donuts - actions audio
+	loadSounds("assets/sounds/fruits", g.sounds)
+	loadSounds("assets/sounds/vegetables", g.sounds)
+	loadSounds("assets/sounds/donuts", g.sounds)
+	loadSounds("assets/sounds/actions", g.actions)
 
 	// load boy 4D sprites idle and run positions
 	var rImg *rl.Image
@@ -134,11 +118,6 @@ func (g *Game) loadAssets() {
 		rImg = getImageFromPictures(fmt.Sprintf("assets/boy/run/right/%d.png", i+1))
 		g.sprite.run[Right] = append(g.sprite.run[Right], rl.LoadTextureFromImage(rImg))
 	}
-
-	g.actions["eat"] = rl.LoadSound("assets/sounds/actions/eat.wav")
-	g.actions["life"] = rl.LoadSound("assets/sounds/actions/life.wav")
-	g.actions["level"] = rl.LoadSound("assets/sounds/actions/level.wav")
-	g.actions["hurt"] = rl.LoadSound("assets/sounds/actions/hurt.wav")
 }
 
 // Unload - Unload resources
