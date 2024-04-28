@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"math"
@@ -27,10 +27,10 @@ func (b *ball) draw() {
 func (b *ball) update() {
 	b.position.X += b.speedX
 	b.position.Y += b.speedY
-	if b.position.Y <= 0 || b.position.Y+float32(b.picture.Height) >= float32(screenH) {
+	if b.position.Y <= 0 || b.position.Y+float32(b.picture.Height) >= float32(ScreenH) {
 		b.speedY *= -1
 	}
-	if b.position.X <= 0 || b.position.X+float32(b.picture.Width) >= float32(screenW) {
+	if b.position.X <= 0 || b.position.X+float32(b.picture.Width) >= float32(ScreenW) {
 		b.speedX *= -1
 	}
 }

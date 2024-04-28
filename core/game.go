@@ -1,12 +1,17 @@
-package main
+package core
 
 import (
 	"math"
-	"os"
-	"strconv"
 	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+)
+
+const cellsize = 40
+
+var (
+	ScreenW int32 = 1280
+	ScreenH int32 = 768
 )
 
 type item struct {
@@ -17,38 +22,20 @@ type item struct {
 type Game struct {
 	num        int
 	faces      map[string]rl.Texture2D
-	actions    map[string]rl.Sound
+	Actions    map[string]rl.Sound
 	fruits     []item
 	vegetables []item
 	donuts     []item
 	lives      []item
 	balls      []item // balls to use as enemies
 	sounds     map[string]rl.Sound
-	sprite     Sprite
+	Sprite     Sprite
 	foods      []*Food
 	enemies    []enemy
-	score      Score
+	Score      Score
 }
 
-// loadsettings loads environment variables to set screen width and height.
-// min value for width is 800 and for height is 500
-func loadsettings() {
-	w := os.Getenv("GOEATS_SCREEN_WIDTH")
-	h := os.Getenv("GOEATS_SCREEN_HEIGHT")
-	if w != "" {
-		if v, err := strconv.Atoi(w); err == nil && v >= 800 {
-			screenW = int32(v)
-		}
-	}
-	if h != "" {
-		if v, err := strconv.Atoi(h); err == nil && v >= 500 {
-			screenH = int32(v)
-		}
-	}
-}
-
-func (g *Game) init() {
-	loadsettings()
+func (g *Game) Init() {
 	g.num = 11 // 10 foods + 1 life
 	g.foods = make([]*Food, g.num)
 	for i := 0; i < g.num-1; i++ {
@@ -62,29 +49,29 @@ func (g *Game) init() {
 	g.fruits = make([]item, 0, 44)
 	g.donuts = make([]item, 0, 12)
 	g.lives = make([]item, 0, 5)
-	g.actions = make(map[string]rl.Sound, 3)
+	g.Actions = make(map[string]rl.Sound, 3)
 	g.sounds = make(map[string]rl.Sound)
 
-	g.sprite.velocity = 0.0
-	g.sprite.speed = 7
-	g.sprite.moving = false
-	g.sprite.position = rl.NewVector2(2, float32(screenH/2))
-	g.sprite.face = Right
-	g.sprite.idle = make(map[direction][]rl.Texture2D, 4)
-	g.sprite.run = make(map[direction][]rl.Texture2D, 4)
-	g.sprite.radius = float32(spriteW) * float32(math.Sqrt(2)) / 2
+	g.Sprite.Velocity = 0.0
+	g.Sprite.speed = 7
+	g.Sprite.Moving = false
+	g.Sprite.position = rl.NewVector2(2, float32(ScreenH/2))
+	g.Sprite.face = Right
+	g.Sprite.idle = make(map[direction][]rl.Texture2D, 4)
+	g.Sprite.run = make(map[direction][]rl.Texture2D, 4)
+	g.Sprite.radius = float32(spriteW) * float32(math.Sqrt(2)) / 2
 
 	g.balls = make([]item, 0, 4)
 }
 
 // Draw game textures
-func (g *Game) draw() {
+func (g *Game) Draw() {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.Beige)
-	g.score.draw()
+	g.Score.draw()
 	g.drawFoods()
 	g.drawEnemies()
-	g.sprite.draw()
+	g.Sprite.Draw()
 	rl.EndDrawing()
 }
 
@@ -95,9 +82,9 @@ func (g *Game) drawFoods() {
 }
 
 func (g *Game) drawEnemies() {
-	center := rl.Vector2{X: g.sprite.position.X + spriteW/2, Y: g.sprite.position.Y + spriteH/2}
+	center := rl.Vector2{X: g.Sprite.position.X + spriteW/2, Y: g.Sprite.position.Y + spriteH/2}
 	// add 1 ball-based enemy each 3rd level with a max of available balls
-	if g.score.level > 0 && g.score.level%3 == 0 && (g.score.level/3) != len(g.enemies) && len(g.enemies) < len(g.balls) {
+	if g.Score.level > 0 && g.Score.level%3 == 0 && (g.Score.level/3) != len(g.enemies) && len(g.enemies) < len(g.balls) {
 		g.addEnemy()
 	}
 
@@ -105,14 +92,14 @@ func (g *Game) drawEnemies() {
 		// increase enemy speed with a step of half the level + 1 on both axises while
 		// making sure it is done until level 12 rather than 3*len(g.balls) in order to
 		// cap the speed to a max of 7.
-		if g.score.level <= 12 {
-			e.speed(float32(g.score.level/2 + 1))
+		if g.Score.level <= 12 {
+			e.speed(float32(g.Score.level/2 + 1))
 		}
 		e.draw()
 
-		if e.collision(center, g.sprite.radius) {
-			rl.PlaySound(g.actions["hurt"])
-			g.score.lives--
+		if e.collision(center, g.Sprite.radius) {
+			rl.PlaySound(g.Actions["hurt"])
+			g.Score.lives--
 		}
 	}
 }
@@ -125,24 +112,24 @@ func (g *Game) addEnemy() {
 }
 
 func (g *Game) update() {
-	center := rl.Vector2{X: g.sprite.position.X + spriteW/2, Y: g.sprite.position.Y + spriteH/2}
+	center := rl.Vector2{X: g.Sprite.position.X + spriteW/2, Y: g.Sprite.position.Y + spriteH/2}
 	for _, food := range g.foods {
 		food.change = false
-		if food.collision(center, g.sprite.radius) {
+		if food.collision(center, g.Sprite.radius) {
 			if food.kind == L {
-				rl.PlaySound(g.actions["life"])
+				rl.PlaySound(g.Actions["life"])
 			} else {
-				rl.PlaySound(g.actions["eat"])
+				rl.PlaySound(g.Actions["eat"])
 				rl.PlaySound(g.sounds[food.name])
 			}
-			g.score.update(food.kind)
+			g.Score.update(food.kind)
 			food.change = true
 		}
 	}
-	g.randomize()
+	g.Randomize()
 }
 
-func (g *Game) checkExpire() {
+func (g *Game) CheckExpire() {
 	for _, food := range g.foods {
 		food.change = false
 		if time.Now().Unix() >= food.expire {
@@ -150,10 +137,10 @@ func (g *Game) checkExpire() {
 			continue
 		}
 	}
-	g.randomize()
+	g.Randomize()
 }
 
-func (g *Game) randomize() {
+func (g *Game) Randomize() {
 	for _, food := range g.foods {
 		if !food.change {
 			continue

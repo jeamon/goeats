@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"math"
@@ -23,17 +23,17 @@ const (
 type Sprite struct {
 	run      map[direction][]rl.Texture2D
 	idle     map[direction][]rl.Texture2D
-	moving   bool
+	Moving   bool
 	face     direction
-	velocity float32
+	Velocity float32
 	speed    float32
 	position rl.Vector2
 	radius   float32 // player's circle radius
 }
 
-func (s *Sprite) draw() {
-	if s.moving {
-		txt := s.run[s.face][int(s.velocity)]
+func (s *Sprite) Draw() {
+	if s.Moving {
+		txt := s.run[s.face][int(s.Velocity)]
 		rl.DrawTexture(txt, int32(s.position.X), int32(s.position.Y), rl.White)
 	} else {
 		txt := s.idle[s.face][int(rl.GetTime())%6]

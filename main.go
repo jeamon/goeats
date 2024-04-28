@@ -1,60 +1,68 @@
 package main
 
 import (
-	"log"
+	"embed"
+	"os"
+	"strconv"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/jeamon/goeats/core"
 )
 
-type kind uint8
+//go:embed assets/*/*.png
+//go:embed assets/*/*/*.png
+//go:embed assets/*/*/*/*.png
+var picturesFs embed.FS
 
-const (
-	V kind = 0 // veggie item
-	F kind = 1 // fruit item
-	D kind = 2 // donut item
-	L kind = 3 // life item
-)
+//go:embed assets/sounds/*/*.wav
+var soundsFs embed.FS
 
-const cellsize = 40
-
-var (
-	screenW int32 = 1280
-	screenH int32 = 768
-)
-
-var gamepad int32 = 0 // gamepad to track
-
-func checkerr(err error) {
-	if err != nil {
-		log.Fatal(err)
+// loadsettings loads environment variables to set screen width and height.
+// min value for width is 800 and for height is 500
+func loadsettings() {
+	w := os.Getenv("GOEATS_SCREEN_WIDTH")
+	h := os.Getenv("GOEATS_SCREEN_HEIGHT")
+	if w != "" {
+		if v, err := strconv.Atoi(w); err == nil && v >= 800 {
+			core.ScreenW = int32(v)
+		}
+	}
+	if h != "" {
+		if v, err := strconv.Atoi(h); err == nil && v >= 500 {
+			core.ScreenH = int32(v)
+		}
 	}
 }
 
 func main() {
-	game := Game{}
-	game.init()
-	rl.InitWindow(screenW, screenH, "Go & Eats")
+	loadsettings()
+	core.PicturesFs = picturesFs
+	core.SoundsFs = soundsFs
+
+	game := core.Game{}
+	game.Init()
+	rl.InitWindow(core.ScreenW, core.ScreenH, "Go & Eats")
 	rl.InitAudioDevice()
 	rl.SetTargetFPS(60)
-	game.loadAssets()
-	game.score.sound = game.actions["level"]
-	game.randomize()
-	game.sprite.draw()
+	game.LoadAssets()
+	game.Score.Sound = game.Actions["level"]
+	game.Randomize()
+	game.Sprite.Draw()
 	for !rl.WindowShouldClose() {
-		game.draw()
-		game.sprite.moving = false
-		game.controls()
-		game.checkExpire()
+		game.Draw()
+		game.Sprite.Moving = false
+		game.Controls()
+		game.CheckExpire()
 
-		if game.sprite.moving {
-			game.sprite.velocity += 0.3
-			if game.sprite.velocity >= 6 {
-				game.sprite.velocity = 0
+		if game.Sprite.Moving {
+			game.Sprite.Velocity += 0.3
+			if game.Sprite.Velocity >= 6 {
+				game.Sprite.Velocity = 0
 			}
 		}
 	}
 
-	game.unload()
+	game.Unload()
 	rl.CloseAudioDevice()
 	rl.CloseWindow()
 }

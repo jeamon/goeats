@@ -1,9 +1,18 @@
-package main
+package core
 
 import (
 	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+)
+
+type kind uint8
+
+const (
+	V kind = 0 // veggie item
+	F kind = 1 // fruit item
+	D kind = 2 // donut item
+	L kind = 3 // life item
 )
 
 // Food type
@@ -18,8 +27,8 @@ type Food struct {
 
 func (f *Food) randomize(items *[]item) {
 	f.position = rl.NewVector2(
-		float32(rl.GetRandomValue(1, (screenW/cellsize)-2))*cellsize,
-		float32(rl.GetRandomValue(1, (screenH/cellsize)-2))*cellsize,
+		float32(rl.GetRandomValue(1, (ScreenW/cellsize)-2))*cellsize,
+		float32(rl.GetRandomValue(1, (ScreenH/cellsize)-2))*cellsize,
 	)
 	item := (*items)[rl.GetRandomValue(0, int32(len(*items)-1))]
 	f.picture = item.picture

@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -14,46 +14,48 @@ const (
 	NN gamepadkey = 20
 )
 
-func (g *Game) controls() {
+const gamepadID int32 = 0 // gamepad to track
+
+func (g *Game) Controls() {
 	if rl.IsKeyDown(rl.KeyRight) || gamePadButtonPressed() == RT {
-		g.sprite.face = Right
-		if g.sprite.position.X+g.sprite.speed <= (float32(screenW) - spriteW) {
-			g.sprite.position.X += g.sprite.speed
+		g.Sprite.face = Right
+		if g.Sprite.position.X+g.Sprite.speed <= (float32(ScreenW) - spriteW) {
+			g.Sprite.position.X += g.Sprite.speed
 		}
-		g.sprite.moving = true
+		g.Sprite.Moving = true
 		g.update()
 	}
 
 	if rl.IsKeyDown(rl.KeyLeft) || gamePadButtonPressed() == LT {
-		g.sprite.face = Left
-		if g.sprite.position.X-g.sprite.speed >= 0 {
-			g.sprite.position.X -= g.sprite.speed
+		g.Sprite.face = Left
+		if g.Sprite.position.X-g.Sprite.speed >= 0 {
+			g.Sprite.position.X -= g.Sprite.speed
 		}
-		g.sprite.moving = true
+		g.Sprite.Moving = true
 		g.update()
 	}
 
 	if rl.IsKeyDown(rl.KeyUp) || gamePadButtonPressed() == UP {
-		g.sprite.face = Back
-		if g.sprite.position.Y-g.sprite.speed >= 0 {
-			g.sprite.position.Y -= g.sprite.speed
+		g.Sprite.face = Back
+		if g.Sprite.position.Y-g.Sprite.speed >= 0 {
+			g.Sprite.position.Y -= g.Sprite.speed
 		}
-		g.sprite.moving = true
+		g.Sprite.Moving = true
 		g.update()
 	}
 
 	if rl.IsKeyDown(rl.KeyDown) || gamePadButtonPressed() == DN {
-		g.sprite.face = Front
-		if g.sprite.position.Y+g.sprite.speed <= float32(screenH)-spriteH {
-			g.sprite.position.Y += g.sprite.speed
+		g.Sprite.face = Front
+		if g.Sprite.position.Y+g.Sprite.speed <= float32(ScreenH)-spriteH {
+			g.Sprite.position.Y += g.Sprite.speed
 		}
-		g.sprite.moving = true
+		g.Sprite.Moving = true
 		g.update()
 	}
 }
 
 func gamePadButtonPressed() gamepadkey {
-	if rl.IsGamepadAvailable(gamepad) {
+	if rl.IsGamepadAvailable(gamepadID) {
 		switch rl.GetGamepadButtonPressed() {
 		case rl.GamepadButtonLeftFaceRight, rl.GamepadButtonRightFaceRight:
 			return RT
