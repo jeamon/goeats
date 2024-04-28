@@ -6,7 +6,7 @@ Move around a scene to collect (eat) foods (vegetables - fruits - lives - donuts
 fruits and vegetables. At the same time develop strategy to escape traps and enemies. Just ***Go & Eat For Fun*** :)
 
 
-![overview of GoEats](https://github.com/jeamon/goeats/blob/main/cover.PNG?raw=true)
+![overview of GoEats](https://github.com/jeamon/goeats/blob/main/docs/cover.PNG?raw=true)
 
 
 ## Features / Goals
