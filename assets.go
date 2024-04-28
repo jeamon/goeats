@@ -11,6 +11,7 @@ import (
 )
 
 //go:embed assets/*/*.png
+//go:embed assets/*/*/*.png
 //go:embed assets/*/*/*/*.png
 var pictures embed.FS
 
@@ -78,10 +79,10 @@ func loadSounds(dir string, m map[string]rl.Sound) {
 // loadAssets - Load resources
 func (g *Game) loadAssets() {
 	// load pictures
-	loadPictures("assets/fruits", &g.fruits)
-	loadPictures("assets/vegetables", &g.vegetables)
-	loadPictures("assets/donuts", &g.donuts)
-	loadPictures("assets/lives", &g.lives)
+	loadPictures("assets/foods/fruits", &g.fruits)
+	loadPictures("assets/foods/vegetables", &g.vegetables)
+	loadPictures("assets/foods/donuts", &g.donuts)
+	loadPictures("assets/foods/lives", &g.lives)
 	loadPictures("assets/balls", &g.balls)
 	loadFaces(g.faces)
 
