@@ -1,11 +1,12 @@
 # share assets structure but ignore contents
 assets/**/*.wav
-assets/**/*.mp3
 assets/**/*.png
 
 # Binaries for programs and plugins
 *.exe
 goeats
+bin/*
+dist/*
 
 # OSX stuff
 .DS_Store
@@ -14,4 +15,4 @@ goeats
 .vscode
 
 # tracking list. 
-TODO.txt
+TODO
