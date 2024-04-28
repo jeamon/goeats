@@ -15,12 +15,11 @@ import (
 //go:embed assets/*/*/*/*.png
 var pictures embed.FS
 
-//go:embed assets/sounds/*/*.mp3
 //go:embed assets/sounds/*/*.wav
 var sounds embed.FS
 
-func isMp3(path string) bool {
-	return filepath.Ext(path) == ".mp3"
+func isWav(path string) bool {
+	return filepath.Ext(path) == ".wav"
 }
 
 func loadPictures(dir string, m *[]item) {
@@ -77,10 +76,10 @@ func (g *Game) loadAssets() {
 	filenames, err := f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
-		if !isMp3(fn) {
+		if !isWav(fn) {
 			continue
 		}
-		name := strings.TrimSuffix(fn, ".mp3")
+		name := strings.TrimSuffix(fn, ".wav")
 		g.sounds[name] = rl.LoadSound("assets/sounds/fruits/" + fn)
 	}
 
@@ -89,10 +88,10 @@ func (g *Game) loadAssets() {
 	filenames, err = f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
-		if !isMp3(fn) {
+		if !isWav(fn) {
 			continue
 		}
-		name := strings.TrimSuffix(fn, ".mp3")
+		name := strings.TrimSuffix(fn, ".wav")
 		g.sounds[name] = rl.LoadSound("assets/sounds/vegetables/" + fn)
 	}
 
@@ -101,10 +100,10 @@ func (g *Game) loadAssets() {
 	filenames, err = f.Readdirnames(0)
 	checkerr(err)
 	for _, fn := range filenames {
-		if !isMp3(fn) {
+		if !isWav(fn) {
 			continue
 		}
-		name := strings.TrimSuffix(fn, ".mp3")
+		name := strings.TrimSuffix(fn, ".wav")
 		g.sounds[name] = rl.LoadSound("assets/sounds/donuts/" + fn)
 	}
 
@@ -138,7 +137,7 @@ func (g *Game) loadAssets() {
 
 	g.actions["eat"] = rl.LoadSound("assets/sounds/actions/eat.wav")
 	g.actions["life"] = rl.LoadSound("assets/sounds/actions/life.wav")
-	g.actions["level"] = rl.LoadSound("assets/sounds/actions/level.mp3")
+	g.actions["level"] = rl.LoadSound("assets/sounds/actions/level.wav")
 	g.actions["hurt"] = rl.LoadSound("assets/sounds/actions/hurt.wav")
 }
 
